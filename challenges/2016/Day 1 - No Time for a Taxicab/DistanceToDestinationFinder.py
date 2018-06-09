@@ -13,17 +13,20 @@ class DistanceToDestinationFinder:
     
     CARDINALS_CLOCKWISE = ["N", "E", "S", "W"]
     
-    def __init__(self, raw_directions:str) -> "DistanceToDestinationFinder":
+    def __init__(self, raw_instructions:str) -> "DistanceToDestinationFinder":
         """
         Constructor.
-        - Parses raw_directions into a List
+        - Parses raw_instructions into a List
+        - Declares a last_instruction_index to keep track of where we are in
+          the list of directions
         - Sets starting current_direction to North
-        - Creates a Dict to log how many steps in each cardinal direction
+        - Declares a Dict to log how many steps in each cardinal direction
           we have taken from the origin point
-        - Creates empty coordinates_history List
+        - Declares an empty coordinates_history List
         - Adds starting position to coordinates_history list
         """
-        self.directions = raw_directions.split(", ")
+        self.instructions = raw_instructions.split(", ")
+        self.last_instruction_index = 0
         self.current_direction = "N"
         self.moves_in_each_direction = {
             "N" : 0,
@@ -96,7 +99,7 @@ class DistanceToDestinationFinder:
         Solves Part 1 of the puzzle, which is finding the shortest distance
         with the entire input string regardless of locations. 
         """
-        for instruction in self.directions:
+        for instruction in self.instructions:
             self.apply_turn_move_instruction(instruction)            
         north = self.moves_in_each_direction["N"]
         south = self.moves_in_each_direction["S"]

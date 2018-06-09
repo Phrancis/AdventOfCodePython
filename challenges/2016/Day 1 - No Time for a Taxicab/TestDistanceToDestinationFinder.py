@@ -4,11 +4,11 @@ from DistanceToDestinationFinder import *
 from Coordinates import *
 
 class TestDistanceToDestinationFinder(unittest.TestCase):
-    def test_directions_are_converted_to_list(self):
+    def test_instructions_are_converted_to_list(self):
         test_input= "R5, L5, R5, R3"
         finder = DistanceToDestinationFinder(test_input)
-        self.assertIsInstance(finder.directions, List)
-        self.assertEqual(4, len(finder.directions))
+        self.assertIsInstance(finder.instructions, List)
+        self.assertEqual(4, len(finder.instructions))
 
     def test_facing_north_initially(self):
         finder = DistanceToDestinationFinder("")
