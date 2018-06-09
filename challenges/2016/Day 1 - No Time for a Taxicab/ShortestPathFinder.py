@@ -1,3 +1,6 @@
+# Advent of Code - Day 1: No time for a Taxicab
+# http://adventofcode.com/2016/day/1
+
 class ShortestPathFinder:
     CARDINALS_CLOCKWISE = ["N", "E", "S", "W"]
     
@@ -27,10 +30,7 @@ class ShortestPathFinder:
 
     def apply_turn_move_instruction(self, instruction:str) -> None:
         turn = instruction[0].upper()
-        if len(instruction) == 2:
-            moves = instruction[1]
-        else:
-            moves = instruction[1:len(instruction)-1]
+        moves = instruction[1:]
         try:
             moves = int(moves)
         except:
@@ -44,4 +44,18 @@ class ShortestPathFinder:
         self.moves_in_each_direction[self.current_direction] += moves
 
     def get_shortest_path_blocks(self) -> int:
-        return
+        for instruction in self.directions:
+            self.apply_turn_move_instruction(instruction)            
+        north = self.moves_in_each_direction["N"]
+        south = self.moves_in_each_direction["S"]
+        east = self.moves_in_each_direction["E"]
+        west = self.moves_in_each_direction["W"]
+        latitude_movement = abs(north - south)
+        longitude_movement = abs(east - west)
+        return latitude_movement + longitude_movement
+
+if __name__ == "__main__":
+    puzzle_input = "R3, L2, L2, R4, L1, R2, R3, R4, L2, R4, L2, L5, L1, R5, R2, R2, L1, R4, R1, L5, L3, R4, R3, R1, L1, L5, L4, L2, R5, L3, L4, R3, R1, L3, R1, L3, R3, L4, R2, R5, L190, R2, L3, R47, R4, L3, R78, L1, R3, R190, R4, L3, R4, R2, R5, R3, R4, R3, L1, L4, R3, L4, R1, L4, L5, R3, L3, L4, R1, R2, L4, L3, R3, R3, L2, L5, R1, L4, L1, R5, L5, R1, R5, L4, R2, L2, R1, L5, L4, R4, R4, R3, R2, R3, L1, R4, R5, L2, L5, L4, L1, R4, L4, R4, L4, R1, R5, L1, R1, L5, R5, R1, R1, L3, L1, R4, L1, L4, L4, L3, R1, R4, R1, R1, R2, L5, L2, R4, L1, R3, L5, L2, R5, L4, R5, L5, R3, R4, L3, L3, L2, R2, L5, L5, R3, R4, R3, R4, R3, R1"
+    shortest_path_finder = ShortestPathFinder(puzzle_input)
+    print(shortest_path_finder.moves_in_each_direction)
+    print(shortest_path_finder.get_shortest_path_blocks())
