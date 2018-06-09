@@ -1,4 +1,4 @@
-from Position import *
+from Coordinates import *
 
 class DistanceToDestinationFinder:
 
@@ -20,8 +20,8 @@ class DistanceToDestinationFinder:
         - Sets starting current_direction to North
         - Creates a Dict to log how many steps in each cardinal direction
           we have taken from the origin point
-        - Creates empty position_history List
-        - Adds starting position to position_history list
+        - Creates empty coordinates_history List
+        - Adds starting position to coordinates_history list
         """
         self.directions = raw_directions.split(", ")
         self.current_direction = "N"
@@ -30,8 +30,8 @@ class DistanceToDestinationFinder:
             "E" : 0,
             "S" : 0,
             "W" : 0 }
-        self.position_history = []
-        self.position_history.append(Position(0,0))
+        self.coordinates_history = []
+        self.coordinates_history.append(Coordinates(0,0))
 
     def get_current_direction_index(self) -> int:
         """Return numeric index of current direction."""
@@ -69,9 +69,9 @@ class DistanceToDestinationFinder:
         else:
             raise ValueError(f"Invalid turn instruction: {turn}")
         self.moves_in_each_direction[self.current_direction] += moves
-        self.position_history.append(self.get_current_position())
+        self.coordinates_history.append(self.get_current_coordinates())
 
-    def get_current_position(self) -> "Position":
+    def get_current_coordinates(self) -> "Coordinates":
         """
         Calculates and returns the current position relative to the
         starting point.
@@ -82,12 +82,12 @@ class DistanceToDestinationFinder:
         west = self.moves_in_each_direction["W"]
         latitude = north - south
         longitude = east - west
-        return Position(latitude, longitude)
+        return Coordinates(latitude, longitude)
 
-    def position_has_already_been_visited(self, other_position:"Position") -> bool:
+    def coordinates_have_already_been_visited(self, other_coordinates:"Coordinates") -> bool:
         """Returns whether a given position has already been visited."""
-        for position in self.position_history:
-            if position == other_position:
+        for coordinates in self.coordinates_history:
+            if coordinates == other_coordinates:
                 return True
         return False
 
@@ -106,15 +106,15 @@ class DistanceToDestinationFinder:
         longitude_movement = abs(east - west)
         return latitude_movement + longitude_movement
 
-    def get_human_friendly_position_history(self) -> str:
+    def get_human_friendly_coordinates_history(self) -> str:
         """Returns a human-friendly position history."""
-        human_readable_position_history = ""
-        for i in range(len(self.position_history)):
-            human_readable_position_history += f"position_id:{i}, position:({str(self.position_history[i])})\n"
-        return human_readable_position_history
+        human_readable_coordinates_history = ""
+        for i in range(len(self.coordinates_history)):
+            human_readable_coordinates_history += f"position_id:{i}, coordinates:({str(self.coordinates_history[i])})\n"
+        return human_readable_coordinates_history
 
 if __name__ == "__main__":
     puzzle_input = "R3, L2, L2, R4, L1, R2, R3, R4, L2, R4, L2, L5, L1, R5, R2, R2, L1, R4, R1, L5, L3, R4, R3, R1, L1, L5, L4, L2, R5, L3, L4, R3, R1, L3, R1, L3, R3, L4, R2, R5, L190, R2, L3, R47, R4, L3, R78, L1, R3, R190, R4, L3, R4, R2, R5, R3, R4, R3, L1, L4, R3, L4, R1, L4, L5, R3, L3, L4, R1, R2, L4, L3, R3, R3, L2, L5, R1, L4, L1, R5, L5, R1, R5, L4, R2, L2, R1, L5, L4, R4, R4, R3, R2, R3, L1, R4, R5, L2, L5, L4, L1, R4, L4, R4, L4, R1, R5, L1, R1, L5, R5, R1, R1, L3, L1, R4, L1, L4, L4, L3, R1, R4, R1, R1, R2, L5, L2, R4, L1, R3, L5, L2, R5, L4, R5, L5, R3, R4, L3, L3, L2, R2, L5, L5, R3, R4, R3, R4, R3, R1"
     finder = DistanceToDestinationFinder(puzzle_input)
     print(finder.get_shortest_path_from_input())
-    print(finder.get_human_friendly_position_history())
+    print(finder.get_human_friendly_coordinates_history())

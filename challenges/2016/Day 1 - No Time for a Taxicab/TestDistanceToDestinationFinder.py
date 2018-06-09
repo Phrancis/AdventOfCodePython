@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 from DistanceToDestinationFinder import *
-from Position import *
+from Coordinates import *
 
 class TestDistanceToDestinationFinder(unittest.TestCase):
     def test_directions_are_converted_to_list(self):
@@ -16,7 +16,7 @@ class TestDistanceToDestinationFinder(unittest.TestCase):
 
     def test_initial_position_is_correct(self):
         finder = DistanceToDestinationFinder("")
-        self.assertEqual(Position(0,0), finder.position_history[0])
+        self.assertEqual(Coordinates(0,0), finder.coordinates_history[0])
 
     def test_get_current_direction_index_for_all_cardinals(self):
         finder = DistanceToDestinationFinder("")
@@ -69,23 +69,23 @@ class TestDistanceToDestinationFinder(unittest.TestCase):
         finder.apply_turn_move_instruction("L1000")
         self.assertEqual(1000, finder.moves_in_each_direction["S"])  
 
-    def test_get_current_position(self):
+    def test_get_current_coordinates(self):
         finder = DistanceToDestinationFinder("")
-        self.assertEqual(Position(0,0), finder.get_current_position())
+        self.assertEqual(Coordinates(0,0), finder.get_current_coordinates())
         finder.apply_turn_move_instruction("R1")
-        self.assertEqual(Position(0,1), finder.get_current_position())
+        self.assertEqual(Coordinates(0,1), finder.get_current_coordinates())
         finder.apply_turn_move_instruction("R1")
-        self.assertEqual(Position(-1,1), finder.get_current_position())
+        self.assertEqual(Coordinates(-1,1), finder.get_current_coordinates())
         finder.apply_turn_move_instruction("R1")
-        self.assertEqual(Position(-1,0), finder.get_current_position())
+        self.assertEqual(Coordinates(-1,0), finder.get_current_coordinates())
         finder.apply_turn_move_instruction("R1")
-        self.assertEqual(Position(0,0), finder.get_current_position())
+        self.assertEqual(Coordinates(0,0), finder.get_current_coordinates())
 
-    def test_position_has_already_been_visited(self):
+    def test_coordinates_have_already_been_visited(self):
         finder = DistanceToDestinationFinder("")
-        finder.position_history.append(Position(1,1))
-        finder.position_history.append(Position(2,2))
-        self.assertTrue(finder.position_has_already_been_visited(Position(1,1)))
+        finder.coordinates_history.append(Coordinates(1,1))
+        finder.coordinates_history.append(Coordinates(2,2))
+        self.assertTrue(finder.coordinates_have_already_been_visited(Coordinates(1,1)))
 
     def test_part1_R2_L3(self):
         test_input = "R2, L3"
