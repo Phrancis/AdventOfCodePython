@@ -107,5 +107,10 @@ class TestDistanceToDestinationFinder(unittest.TestCase):
         finder = DistanceToDestinationFinder(test_input)
         self.assertEqual(262, finder.get_shortest_path_from_input())
 
+    def test_part2_R8_R4_R4_R8(self):
+        test_input = "R8, R4, R4, R8"
+        finder = DistanceToDestinationFinder(test_input)
+        self.assertEqual(4, finder.get_shortest_path_to_already_visited_location())
+
 if __name__ == "__main__":
     unittest.main()
