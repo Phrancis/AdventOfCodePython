@@ -14,29 +14,23 @@ class DistanceToDestinationFinder:
     """
     
     CARDINALS_CLOCKWISE: List = ["N", "E", "S", "W"]
+    last_instruction_index: int = 0
+    current_direction: str = "N"
+    moves_in_each_direction: Dict = {
+        "N": 0,
+        "E": 0,
+        "S": 0,
+        "W": 0
+    }
+    coordinates_history: List = []
     
     def __init__(self, raw_instructions: str) -> None:
         """
         Constructor.
         - Parses raw_instructions into a List
-        - Declares a last_instruction_index to keep track of where we are in
-          the list of directions
-        - Sets starting current_direction to North
-        - Declares a Dict to log how many steps in each cardinal direction
-          we have taken from the origin point
-        - Declares an empty coordinates_history List
         - Adds starting position to coordinates_history list
         """
         self.instructions: List = raw_instructions.split(", ")
-        self.last_instruction_index: int = 0
-        self.current_direction: str = "N"
-        self.moves_in_each_direction: Dict = {
-            "N": 0,
-            "E": 0,
-            "S": 0,
-            "W": 0
-        }
-        self.coordinates_history: List = []
         self.coordinates_history.append(Coordinates(0, 0))
 
     def get_current_direction_index(self) -> int:
@@ -69,10 +63,10 @@ class DistanceToDestinationFinder:
     def get_turn_and_move_instructions(instruction: str) -> Tuple:
         """
         Takes a string like 'R1' or 'L200' and returns turn and move
-        accordingly, e.g., 'R1' = turn right and move 1 space, or ('R', 1).
+        accordingly, e.g.: 'R1' = turn right and move 1 space, or ('R', 1).
         """
         turn: str = instruction[0].upper()
-        moves: str = instruction[1:]
+        moves: int = instruction[1:]
         if turn not in ["L", "R"]:
             raise ValueError(f"Invalid turn instruction: {turn}")
         try:
@@ -81,10 +75,11 @@ class DistanceToDestinationFinder:
             raise ValueError(f"Invalid number of moves: {moves}")            
         return turn, moves
 
-    def apply_turn_move_instruction(self, instruction: str) -> Union[int, None]:
+    def apply_turn_move_instruction(self, instruction: str) -> None:
         """Applies a turn and move instruction to state."""
-        turn, moves = self.get_turn_and_move_instructions(instruction)
-        index_of_first_instruction = None
+        turn_move_instructions: Tuple = self.get_turn_and_move_instructions(instruction)
+        turn: str = turn_move_instructions[0]
+        moves: int = turn_move_instructions[1]
         if turn == "R":
             self.turn_right()
         elif turn == "L":
@@ -93,9 +88,9 @@ class DistanceToDestinationFinder:
             self.moves_in_each_direction[self.current_direction] += 1
             new_coordinates = self.get_current_coordinates()
             self.coordinates_history.append(new_coordinates)
-            if self.coordinates_have_already_been_visited(new_coordinates):
-                return self.get_first_index_of_coordinates(new_coordinates)
-        return index_of_first_instruction
+        #     if self.coordinates_have_already_been_visited(new_coordinates):
+        #         return self.get_first_index_of_coordinates(new_coordinates)
+        # return index_of_first_instruction
 
     def get_first_index_of_coordinates(self, coordinates: "Coordinates") -> Union[int, None]:
         for coord in self.coordinates_history:
@@ -121,15 +116,13 @@ class DistanceToDestinationFinder:
                 return True
         return False
 
-    def get_shortest_path_from_input(self, instructions: List=None) -> int:
+    def get_shortest_path_from_input(self) -> int:
         """
         Solves Part 1 of the puzzle, which is finding the shortest distance
         with the entire input string regardless of locations. 
         """
-        if not instructions:
-            instructions = self.instructions
-        for instruction in instructions:
-            self.apply_turn_move_instruction(instruction)            
+        for instr in self.instructions:
+            self.apply_turn_move_instruction(instr)
         north, south, east, west = self.get_nsew_values()
         latitude_movement = abs(north - south)
         longitude_movement = abs(east - west)
@@ -140,10 +133,8 @@ class DistanceToDestinationFinder:
         new_instructions = []
         for i in range(len(self.instructions)):
             self.last_instruction_index = i
-            first_already_visit_index = self.apply_turn_move_instruction(self.instructions[i])
-            if first_already_visit_index:
-                new_instructions = self.instructions[0:first_already_visit_index]
-        return self.get_shortest_path_from_input(new_instructions)
+            self.apply_turn_move_instruction(self.instructions[i])
+        return self.get_shortest_path_from_input()
 
     def get_human_friendly_coordinates_history(self) -> str:
         """Returns a human-friendly position history."""
